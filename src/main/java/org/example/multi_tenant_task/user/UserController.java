@@ -12,6 +12,7 @@ import org.example.multi_tenant_task.util.TokenPair;
 import org.example.multi_tenant_task.util.UserView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -41,6 +42,7 @@ public class UserController {
         return new ResponseEntity<>(ApiResponse.success("Login successful.", tokenPair), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/upgrade-role/{userId}")
     public ResponseEntity<ApiResponse<String>> addRole(@PathVariable String userId, @Valid @RequestBody UpgradeRoleRequest request) {
         userService.addRole(UUID.fromString(userId), RoleEnum.valueOf(request.role()));

@@ -14,6 +14,7 @@ import org.example.multi_tenant_task.user.UserRepository;
 import org.example.multi_tenant_task.user.dto.UserRequest;
 import org.example.multi_tenant_task.util.TokenPair;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -77,21 +78,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void addRole(UUID userID, RoleEnum role) {
-        User loggedInUser = currentUserUtil.getLoggedInUser();
 
         User userToUpgrade = userRepository.findUserById(userID).orElseThrow(()
                 -> new EntityNotFoundException("User not found"));
 
-        Role adminRole = roleRepository.findRoleByRole(RoleEnum.ADMIN)
-                .orElseThrow(() -> new EntityNotFoundException("Role access is invalid"));
-
         Role upgradeRole = roleRepository.findRoleByRole(role)
                 .orElseThrow(() -> new EntityNotFoundException("Role access is invalid"));
 
-
-        if (!loggedInUser.getRole().contains(adminRole)) {
-            throw new AccessDeniedException("You don't have access for this operation");
-        }
 
         Set<Role> userCurrentRoles = userToUpgrade.getRole();
 

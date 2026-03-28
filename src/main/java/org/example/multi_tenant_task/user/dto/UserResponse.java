@@ -7,9 +7,6 @@ import lombok.Value;
 import java.io.Serializable;
 import java.util.UUID;
 
-/**
- * DTO for {@link org.example.multi_tenant_task.user.User}
- */
 @Value
 @Builder
 @JsonPropertyOrder({"id", "name", "email"})
