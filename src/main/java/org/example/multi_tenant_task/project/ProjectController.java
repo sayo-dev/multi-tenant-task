@@ -19,7 +19,7 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<String>> createTask(@RequestBody ProjectRequest request) {
 
@@ -38,4 +38,11 @@ public class ProjectController {
     }
 
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @GetMapping("/project/{id}")
+    public ResponseEntity<ApiResponse<ProjectResponse>> getProject(@PathVariable Long id) {
+
+        ProjectResponse project = projectService.getProject(id);
+        return new ResponseEntity<>(ApiResponse.success(project), HttpStatus.OK);
+    }
 }

@@ -15,6 +15,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -42,6 +43,8 @@ public class ProjectServiceImpl implements ProjectService {
                 .user(user)
                 .build();
 
+        project.setOrganization(user.getOrganization());
+
         projectRepository.save(project);
 
     }
@@ -57,5 +60,16 @@ public class ProjectServiceImpl implements ProjectService {
                         .title(project.getTitle())
                         .description(project.getDescription())
                         .build())).toList();
+    }
+
+    @Override
+    public ProjectResponse getProject(Long id) {
+        Project project = projectRepository.getProjectById(id).orElseThrow(()
+                -> new EntityNotFoundException("Project not found"));
+        return ProjectResponse.builder()
+                .id(project.getId())
+                .title(project.getTitle())
+                .description(project.getDescription())
+                .build();
     }
 }
