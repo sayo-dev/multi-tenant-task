@@ -28,7 +28,7 @@ public class Organization {
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "organization")
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL)
     private List<User> user;
 
     @OneToMany(mappedBy = "organization")

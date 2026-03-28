@@ -1,5 +1,6 @@
 package org.example.multi_tenant_task.exception;
 
+import io.jsonwebtoken.JwtException;
 import org.example.multi_tenant_task.util.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({BadCredentialsException.class, UsernameNotFoundException.class})
+    @ExceptionHandler({BadCredentialsException.class,
+            JwtExpiredException.class,
+            UsernameNotFoundException.class})
     public ResponseEntity<ApiResponse<String>> handleInvalidCredentialException(Exception ex) {
 
         return new ResponseEntity<>(ApiResponse.fail(ex.getMessage()), HttpStatus.UNAUTHORIZED);
@@ -23,6 +26,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<String>> handleEntityNotFoundException(EntityNotFoundException ex) {
 
         return new ResponseEntity<>(ApiResponse.fail(ex.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ApiResponse<String>> handleConflictException(ConflictException ex) {
+
+        return new ResponseEntity<>(ApiResponse.fail(ex.getMessage()), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler({AccessDeniedException.class})

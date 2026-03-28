@@ -1,5 +1,6 @@
 package org.example.multi_tenant_task.user;
 
+import org.example.multi_tenant_task.organization.Organization;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -15,4 +16,5 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @EntityGraph(attributePaths = {"role"})
     Optional<User> findUserById(UUID id);
 
+    List<User> findUserByOrganization(Organization organization);
 }

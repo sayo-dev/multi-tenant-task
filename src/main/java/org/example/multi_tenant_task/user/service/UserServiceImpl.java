@@ -2,6 +2,7 @@ package org.example.multi_tenant_task.user.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.example.multi_tenant_task.exception.ConflictException;
 import org.example.multi_tenant_task.exception.EntityNotFoundException;
 import org.example.multi_tenant_task.role.Role;
 import org.example.multi_tenant_task.role.RoleEnum;
@@ -42,7 +43,7 @@ public class UserServiceImpl implements UserService {
 
         Optional<User> userCheck = userRepository.findByEmailIgnoreCase(request.email());
         if (userCheck.isPresent()) {
-            throw new RuntimeException("User already created");
+            throw new ConflictException("User already created");
         }
 
         Role role = roleRepository.findRoleByRole(RoleEnum.MEMBER)
