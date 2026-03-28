@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/org")
+@RequestMapping("/api/v1/org")
 @RestController
 public class OrganizationController {
 
