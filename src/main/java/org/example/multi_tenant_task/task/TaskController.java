@@ -43,4 +43,24 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(null));
     }
 
+    @PatchMapping("/update-status")
+    public ResponseEntity<ApiResponse<String>> updateStatus(
+            @RequestParam Long id,
+            @RequestParam String taskStatus,
+            @RequestParam(required = false) String userEmail
+    ) {
+
+        taskService.updateStatus(id, TaskStatus.valueOf(taskStatus), userEmail);
+        return ResponseEntity.ok(ApiResponse.success(null));
+
+    }
+
+    @GetMapping("/overdue-task")
+    public ResponseEntity<ApiResponse<List<TaskResponse>>> getOverdueTask(@RequestParam(required = false) String email) {
+
+        List<TaskResponse> task = taskService.getOverdueTask(email);
+
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(task));
+    }
+
 }

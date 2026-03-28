@@ -29,6 +29,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ApiResponse.fail(ex.getMessage()), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(CustomBadRequestException.class)
+    public ResponseEntity<ApiResponse<String>> handleCustomBadRequestException(CustomBadRequestException ex) {
+
+        return new ResponseEntity<>(ApiResponse.fail(ex.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ApiResponse<String>> handleConflictException(ConflictException ex) {
 

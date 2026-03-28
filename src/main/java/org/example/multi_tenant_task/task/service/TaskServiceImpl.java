@@ -18,8 +18,10 @@ import org.example.multi_tenant_task.task.dto.TaskResponse;
 import org.example.multi_tenant_task.user.CurrentUserUtil;
 import org.example.multi_tenant_task.user.User;
 import org.example.multi_tenant_task.user.UserRepository;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -53,19 +55,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<TaskResponse> getUserTasks(String email) {
 
-        User user;
-        User loggedInUser = currentUserUtil.getLoggedInUser();
-
-        Role admin = roleRepository.findRoleByRole(RoleEnum.ADMIN).orElseThrow(() -> new CustomBadRequestException("Role mismatch"));
-        Role manager = roleRepository.findRoleByRole(RoleEnum.MANAGER).orElseThrow(() -> new CustomBadRequestException("Role mismatch"));
-
-        boolean hasPermission = loggedInUser.getRole().stream().anyMatch(role -> role == admin || role == manager);
-        if (hasPermission) {
-            user = userRepository.findByEmailIgnoreCase(email).orElseThrow(() ->
-                    new EntityNotFoundException("User not found"));
-        } else {
-            user = loggedInUser;
-        }
+        User user = getUser(email);
 
         return taskRepository.getTasksByUser(user).stream().map(
                 task -> TaskResponse.builder()
@@ -76,6 +66,7 @@ public class TaskServiceImpl implements TaskService {
                         .dueDate(task.getDueDate())
                         .build()).toList();
     }
+
 
     @Transactional
     @Override
@@ -92,4 +83,58 @@ public class TaskServiceImpl implements TaskService {
         tasks.add(task);
         task.setUser(user);
     }
+
+    @Transactional
+    @Override
+    public void updateStatus(Long id, TaskStatus status, String userEmail) {
+
+        User user = getUser(userEmail);
+
+        Task task = taskRepository.findTaskByIdAndUser(id, user).orElseThrow(()
+                -> new EntityNotFoundException("Task not found"));
+
+        if (task.getStatus() == TaskStatus.TODO && status == TaskStatus.DONE)
+            throw new CustomBadRequestException("Only task marked as progress can be done");
+
+        if (task.getStatus() == TaskStatus.DONE)
+            throw new CustomBadRequestException("Task is already completed");
+
+        if (task.getStatus() == status)
+            throw new CustomBadRequestException("Task status not changed");
+
+        task.setStatus(status);
+    }
+
+
+    @Override
+    public List<TaskResponse> getOverdueTask(String email) {
+        User user = getUser(email);
+
+        List<Task> tasks = taskRepository.findByUserAndDueDateBeforeAndStatusNot(user, LocalDateTime.now(), TaskStatus.DONE);
+        return tasks.stream().map(task -> TaskResponse.builder()
+                .id(task.getId())
+                .title(task.getTitle())
+                .description(task.getDescription())
+                .status(task.getStatus())
+                .dueDate(task.getDueDate())
+                .build()).toList();
+    }
+
+    private @NonNull User getUser(String email) {
+        User user;
+        User loggedInUser = currentUserUtil.getLoggedInUser();
+
+        Role admin = roleRepository.findRoleByRole(RoleEnum.ADMIN).orElseThrow(() -> new CustomBadRequestException("Role mismatch"));
+        Role manager = roleRepository.findRoleByRole(RoleEnum.MANAGER).orElseThrow(() -> new CustomBadRequestException("Role mismatch"));
+
+        boolean hasPermission = loggedInUser.getRole().stream().anyMatch(role -> role == admin || role == manager);
+        if (hasPermission) {
+            user = userRepository.findByEmailIgnoreCase(email).orElseThrow(() ->
+                    new EntityNotFoundException("User not found"));
+        } else {
+            user = loggedInUser;
+        }
+        return user;
+    }
+
 }
