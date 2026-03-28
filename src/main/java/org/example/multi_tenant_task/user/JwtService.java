@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import org.example.multi_tenant_task.util.TokenPair;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,6 +31,13 @@ public class JwtService {
     @Value("${app.jwt.refresh-expiration}")
     private Long refreshExpirationMS;
 
+    public TokenPair generateTokenPair(Authentication authentication) {
+        String accessToken = generateAccessToken(authentication);
+        String refreshToken = generateRefreshToken(authentication);
+
+        return new TokenPair(accessToken, refreshToken);
+    }
+
 
     public String generateRefreshToken(Authentication authentication) {
 
@@ -43,7 +51,7 @@ public class JwtService {
 
     public String generateToken(Authentication authentication, long expiration, Map<String, String> claims) {
 
-        UserDetails userDetails = (UserDetails) authentication.getDetails();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         Date iat = new Date();
         Date exp = new Date(iat.getTime() + expiration);

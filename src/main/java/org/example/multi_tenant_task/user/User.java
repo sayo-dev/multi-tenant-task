@@ -33,6 +33,7 @@ public class User {
     private String password;
 
     @ManyToMany
+    //use fetch on field or EntityGraph on repo methods but use EntityGraph instead because it's good practice compared to fetch which loads even when not needed.
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -40,7 +41,7 @@ public class User {
     )
     private Set<Role> role;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Organization organization;
 
     @OneToMany(mappedBy = "user")
