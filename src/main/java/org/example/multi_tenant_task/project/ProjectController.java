@@ -21,10 +21,11 @@ public class ProjectController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse<String>> createTask(@RequestBody ProjectRequest request) {
+    public ResponseEntity<ApiResponse<String>> createProject(@RequestBody ProjectRequest request) {
 
         projectService.createProject(request);
-        return new ResponseEntity<>(ApiResponse.success(null), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success("Project created successfully", null));
     }
 
 
@@ -33,7 +34,7 @@ public class ProjectController {
     public ResponseEntity<ApiResponse<List<ProjectResponse>>> getProjects() {
 
         List<ProjectResponse> projects = projectService.getProjects();
-        return new ResponseEntity<>(ApiResponse.success(projects), HttpStatus.OK);
+        return ResponseEntity.ok(ApiResponse.success(projects));
 
     }
 
@@ -43,6 +44,6 @@ public class ProjectController {
     public ResponseEntity<ApiResponse<ProjectResponse>> getProject(@PathVariable Long id) {
 
         ProjectResponse project = projectService.getProject(id);
-        return new ResponseEntity<>(ApiResponse.success(project), HttpStatus.OK);
+        return ResponseEntity.ok(ApiResponse.success(project));
     }
 }

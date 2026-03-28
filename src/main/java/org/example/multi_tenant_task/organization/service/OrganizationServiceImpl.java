@@ -39,13 +39,13 @@ public class OrganizationServiceImpl implements OrganizationService {
         if (user.getOrganization() != null)
             throw new ConflictException("User already belong to an organization");
 
-
         Organization org = Organization.builder()
                 .name(request.name())
                 .createdAt(LocalDateTime.now())
                 .build();
 
         user.setOrganization(org);
+        org.setUser(List.of(user));
         orgRepository.save(org);
     }
 
@@ -53,15 +53,13 @@ public class OrganizationServiceImpl implements OrganizationService {
     public List<UserResponse> viewOrgUsers() {
 
         User user = currentUserUtil.getLoggedInUser();
-        Role adminRole = roleRepository.findRoleByRole(RoleEnum.ADMIN).orElseThrow(() -> new EntityNotFoundException("Role mismatch"));
-        if (!user.getRole().contains(adminRole))
-            throw new AccessDeniedException("You have no permission for this operation");
 
-        return userRepository.findUserByOrganization(user.getOrganization()).stream().map(u -> UserResponse.builder()
-                .id(u.getId())
-                .name(u.getName())
-                .email(u.getEmail())
-                .build()).toList();
+        return userRepository.findUserByOrganization(user.getOrganization())
+                .stream().map(u -> UserResponse.builder()
+                        .id(u.getId())
+                        .name(u.getName())
+                        .email(u.getEmail())
+                        .build()).toList();
 
     }
 }

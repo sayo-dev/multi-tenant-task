@@ -41,7 +41,7 @@ public class User {
     )
     private Set<Role> role;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Organization organization;
 
     @OneToMany(mappedBy = "user")

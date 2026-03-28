@@ -7,6 +7,7 @@ import org.example.multi_tenant_task.user.dto.UserResponse;
 import org.example.multi_tenant_task.util.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,16 +20,19 @@ public class OrganizationController {
 
     private final OrganizationService orgService;
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<String>> createOrg(@RequestBody OrgRequest request) {
         orgService.createOrg(request);
-        return new ResponseEntity<>(ApiResponse.success(null), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED.value())
+                .body(ApiResponse.success(null));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/users")
     public ResponseEntity<ApiResponse<List<UserResponse>>> getUsers() {
 
-        return new ResponseEntity<>(ApiResponse.success("Request successful", orgService.viewOrgUsers()), HttpStatus.OK);
+        return ResponseEntity.ok(ApiResponse.success("Request successful", orgService.viewOrgUsers()));
 
     }
 }

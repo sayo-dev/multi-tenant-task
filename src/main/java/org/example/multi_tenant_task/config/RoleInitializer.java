@@ -18,8 +18,9 @@ public class RoleInitializer {
     public void initRoles() {
         for (var roleValue : RoleEnum.values()) {
             roleRepository.findRoleByRole(roleValue).orElseGet(() -> {
-                Role role = new Role();
-                role.setRole(roleValue);
+                Role role = Role.builder()
+                        .role(roleValue)
+                        .build();
                 return roleRepository.save(role);
             });
         }

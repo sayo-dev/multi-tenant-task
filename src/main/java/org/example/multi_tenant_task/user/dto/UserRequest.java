@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.example.multi_tenant_task.organization.Organization;
 import org.example.multi_tenant_task.util.UserView;
 
 public record UserRequest(

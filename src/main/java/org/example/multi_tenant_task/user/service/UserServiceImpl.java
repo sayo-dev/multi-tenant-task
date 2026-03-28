@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.multi_tenant_task.exception.ConflictException;
 import org.example.multi_tenant_task.exception.EntityNotFoundException;
+import org.example.multi_tenant_task.organization.Organization;
+import org.example.multi_tenant_task.organization.OrganizationRepository;
 import org.example.multi_tenant_task.role.Role;
 import org.example.multi_tenant_task.role.RoleEnum;
 import org.example.multi_tenant_task.role.RoleRepository;
@@ -31,6 +33,7 @@ import java.util.UUID;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private final OrganizationRepository orgRepository;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
@@ -40,25 +43,31 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void createUser(UserRequest request) {
+    public void createUser(Long orgId, UserRequest request) {
+
+        Organization organization = null;
+        if (orgId != null) {
+            organization = orgRepository.findById(orgId)
+                    .orElseThrow(() -> new EntityNotFoundException("Organization not found"));
+        }
 
         Optional<User> userCheck = userRepository.findByEmailIgnoreCase(request.email());
         if (userCheck.isPresent()) {
             throw new ConflictException("User already created");
         }
 
-        Role role = roleRepository.findRoleByRole(RoleEnum.MEMBER)
+        Role role = roleRepository.findRoleByRole(organization != null ? RoleEnum.MEMBER : RoleEnum.ADMIN)
                 .orElseThrow(() -> new EntityNotFoundException("Role access is invalid"));
 
         User user = User.builder()
                 .name(request.name())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
+                .organization(organization)
                 .role(Set.of(role))
                 .build();
 
         userRepository.save(user);
-
     }
 
     @Override

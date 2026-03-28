@@ -29,7 +29,7 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Project project;
 
     @ManyToOne

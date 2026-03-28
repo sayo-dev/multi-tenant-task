@@ -36,7 +36,8 @@ public class SecurityConfig {
 
             "/api/auth/**",
             "/api/org/**",
-            "/api/project/**"
+            "/api/project/**",
+            "/api/task/**"
     };
 
     @Bean

@@ -25,10 +25,12 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/create")
+    public ResponseEntity<ApiResponse<String>> create(
+            @RequestParam(required = false) Long orgId,
+            @JsonView(UserView.Create.class)
+            @Valid @RequestBody UserRequest request) {
 
-    public ResponseEntity<ApiResponse<String>> create(@JsonView(UserView.Create.class) @Valid @RequestBody UserRequest request) {
-
-        userService.createUser(request);
+        userService.createUser(orgId, request);
         return new ResponseEntity<>(ApiResponse.success("User created successfully.", null), HttpStatus.CREATED);
     }
 

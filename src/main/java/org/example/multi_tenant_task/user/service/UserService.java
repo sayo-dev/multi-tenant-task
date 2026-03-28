@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface UserService {
 
-    void createUser(UserRequest request);
+    void createUser(Long orgId, UserRequest request);
 
     TokenPair loginUser(UserRequest request);
 
