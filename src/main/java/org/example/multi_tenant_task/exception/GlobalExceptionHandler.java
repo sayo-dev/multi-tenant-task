@@ -6,10 +6,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.Arrays;
 
 @Slf4j
 @RestControllerAdvice
@@ -27,6 +30,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<String>> handleEntityNotFoundException(EntityNotFoundException ex) {
 
         return new ResponseEntity<>(ApiResponse.fail(ex.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ApiResponse<String>> handleDisabledException(DisabledException ex) {
+
+        return new ResponseEntity<>(ApiResponse.fail("User is not verified"), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(CustomBadRequestException.class)
@@ -60,7 +69,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<String>> handleInternalServerException(Exception ex) {
 
-        log.info(ex.getLocalizedMessage());
+        log.info(ex.toString());
         return new ResponseEntity<>(ApiResponse.fail(ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

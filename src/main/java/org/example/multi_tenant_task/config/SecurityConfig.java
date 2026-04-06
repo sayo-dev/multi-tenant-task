@@ -1,7 +1,7 @@
 package org.example.multi_tenant_task.config;
 
 import lombok.RequiredArgsConstructor;
-import org.example.multi_tenant_task.user.JwtAuthenticationFilter;
+import org.example.multi_tenant_task.entities.user.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -38,6 +38,7 @@ public class SecurityConfig {
             "/api/v1/org/**",
             "/api/v1/project/**",
             "/api/v1/task/**",
+            "/api/v1/otp/**",
 
             "/v2/api-docs",
             "/v3/api-docs",
