@@ -50,6 +50,7 @@ public class UserServiceImpl implements UserService {
     private final CurrentUserUtil currentUserUtil;
 
 
+    @Transactional
     @Override
     public void createUser(UserRequest request) {
         Organization organization = null;
@@ -78,10 +79,18 @@ public class UserServiceImpl implements UserService {
 
         String otp = Helper.generateNumericOtp(6);
 
-        otpService.createOtp(OtpRequest.builder()
+        //db level interaction
+//        otpService.createOtp(OtpRequest.builder()
+//                .purpose(OtpType.ACCOUNT_VERIFICATION.name())
+//                .email(request.email())
+//                .otp(passwordEncoder.encode(otp))
+//                .build());
+
+        //redis level interaction
+        otpService.generateAndStoreOtp(OtpRequest.builder()
+                .otp(otp)
                 .purpose(OtpType.ACCOUNT_VERIFICATION.name())
                 .email(request.email())
-                .otp(passwordEncoder.encode(otp))
                 .build());
 
         userRepository.save(user);

@@ -8,6 +8,6 @@ import org.example.multi_tenant_task.util.view.OtpView;
 public record OtpRequest(
 
         @JsonView(OtpView.Base.class) String otp,
-        @JsonView(OtpView.Base.class) String email,
-        @JsonView(OtpView.Verify.class) String purpose) {
+        @JsonView({OtpView.Base.class, OtpView.Resend.class}) String email,
+        @JsonView(OtpView.Purpose.class) String purpose) {
 }

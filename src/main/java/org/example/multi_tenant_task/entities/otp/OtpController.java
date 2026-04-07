@@ -20,7 +20,7 @@ public class OtpController {
 
 
     @PostMapping("/verify-email")
-    public ResponseEntity<ApiResponse<String>> verifyEmail(@JsonView(OtpView.Verify.class) @RequestBody OtpRequest request) {
+    public ResponseEntity<ApiResponse<String>> verifyEmail(@JsonView(OtpView.Base.class) @RequestBody OtpRequest request) {
 
         otpService.verifyOtp(OtpRequest.builder()
                 .purpose(OtpType.ACCOUNT_VERIFICATION.name())
@@ -31,5 +31,11 @@ public class OtpController {
         return ResponseEntity.ok(ApiResponse.success("User verified", null));
     }
 
+
+    @PostMapping("/resend")
+    public ResponseEntity<ApiResponse<String>> resendOtp(@JsonView(OtpView.Resend.class) @RequestBody OtpRequest request) {
+        otpService.resendOtp(request);
+        return ResponseEntity.ok(ApiResponse.success("Otp sent successfully", null));
+    }
 
 }

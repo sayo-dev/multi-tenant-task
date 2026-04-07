@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import org.example.multi_tenant_task.util.view.UserView;
 
+@Builder
 public record UserRequest(
         @NotNull(message = "Name cannot be null")
         @NotBlank(message = "Name cannot be epmty")

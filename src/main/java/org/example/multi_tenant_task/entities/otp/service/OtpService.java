@@ -6,5 +6,10 @@ public interface OtpService {
 
     void createOtp(OtpRequest request);
 
+    void generateAndStoreOtp(OtpRequest request);
+
+    void resendOtp(OtpRequest request);
+
     void verifyOtp(OtpRequest request);
+
 }
