@@ -20,7 +20,7 @@ public class EmailService {
     private final TemplateEngine templateEngine;
 
     @Async
-    public void sendVerificationMail(String to, String subject, String templateName, Map<String, Object> templateModel)
+    public void sendMail(String to, String subject, String templateName, Map<String, Object> templateModel)
             throws MessagingException {
 
         final MimeMessage message = mailSender.createMimeMessage();

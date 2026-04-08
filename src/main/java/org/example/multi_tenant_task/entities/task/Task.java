@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.example.multi_tenant_task.entities.project.Project;
 import org.example.multi_tenant_task.entities.user.User;
+import org.example.multi_tenant_task.util.Auditable;
 //import org.example.multi_tenant_task.util.Auditable;
 
 import java.time.LocalDateTime;
@@ -13,9 +14,9 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 @Entity
-public class Task {
+public class Task extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
+import org.example.multi_tenant_task.util.Auditable;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,7 +13,7 @@ import lombok.*;
 @Setter
 @Builder
 @Entity
-public class Otp {
+public class Otp extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

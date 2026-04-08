@@ -18,11 +18,13 @@ import org.example.multi_tenant_task.entities.task.dto.TaskResponse;
 import org.example.multi_tenant_task.entities.user.CurrentUserUtil;
 import org.example.multi_tenant_task.entities.user.User;
 import org.example.multi_tenant_task.entities.user.UserRepository;
+import org.example.multi_tenant_task.util.EmailService;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
@@ -34,11 +36,12 @@ public class TaskServiceImpl implements TaskService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final CurrentUserUtil currentUserUtil;
+    private final EmailService emailService;
 
     @Override
     public void createTask(Long projectId, TaskRequest request) {
 
-        Project project = projectRepository.getProjectById(projectId).orElseThrow(()
+        Project project = projectRepository.findById(projectId).orElseThrow(()
                 -> new EntityNotFoundException("Project not found"));
 
         Task task = Task.builder()
@@ -83,6 +86,19 @@ public class TaskServiceImpl implements TaskService {
         List<Task> tasks = user.getTasks();
         tasks.add(task);
         task.setUser(user);
+
+        try {
+            emailService.sendMail(user.getEmail(), "Task Assignment", "task", Map.of(
+                    "userName", user.getName(),
+                    "taskTitle", task.getTitle(),
+                    "taskDescription", task.getDescription(),
+                    "dueDate", task.getDueDate()
+            ));
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+
+
     }
 
     @Transactional

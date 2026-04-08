@@ -1,6 +1,9 @@
 package org.example.multi_tenant_task.entities.project.service;
 
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Or;
+import org.example.multi_tenant_task.entities.organization.Organization;
+import org.example.multi_tenant_task.entities.organization.OrganizationRepository;
 import org.example.multi_tenant_task.exception.EntityNotFoundException;
 import org.example.multi_tenant_task.entities.project.Project;
 import org.example.multi_tenant_task.entities.project.ProjectRepository;
@@ -22,20 +25,12 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository projectRepository;
     private final RoleRepository roleRepository;
-    private final CurrentUserUtil currentUserUtil;
+    private final OrganizationRepository organizationRepository;
 
 
     @Override
-    public void createProject(ProjectRequest request) {
+    public void createProject(ProjectRequest request, User user) {
 
-        User user = currentUserUtil.getLoggedInUser();
-
-        Role adminRole = roleRepository.findRoleByRole(RoleEnum.ADMIN).orElseThrow(() -> new EntityNotFoundException("Role mismatch"));
-        Role managerRole = roleRepository.findRoleByRole(RoleEnum.MANAGER).orElseThrow(() -> new EntityNotFoundException("Role mismatch"));
-
-
-        if (!(user.getRole().contains(adminRole) || user.getRole().contains(managerRole)))
-            throw new AccessDeniedException("You don't have permission for this operation");
         Project project = Project.builder()
                 .title(request.title())
                 .description(request.description())
@@ -49,9 +44,8 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<ProjectResponse> getProjects() {
+    public List<ProjectResponse> getProjects(User user) {
 
-        User user = currentUserUtil.getLoggedInUser();
 
         return projectRepository.getAllByOrganization(user.getOrganization()).stream()
                 .map((project -> ProjectResponse.builder()
@@ -62,13 +56,24 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectResponse getProject(Long id) {
-        Project project = projectRepository.getProjectById(id).orElseThrow(()
+    public ProjectResponse getProject(Long id, User user) {
+        Project project = projectRepository.findProjectByIdAndOrganizationId(id, user.getOrganization().getId()).orElseThrow(()
                 -> new EntityNotFoundException("Project not found"));
         return ProjectResponse.builder()
                 .id(project.getId())
                 .title(project.getTitle())
                 .description(project.getDescription())
                 .build();
+    }
+
+    @Override
+    public void deleteProject(Long id, User user) {
+
+        Organization org = organizationRepository.findByUserId(user.getId()).orElseThrow(() -> new EntityNotFoundException("Organization not found"));
+
+        Project project = projectRepository.findProjectByIdAndOrganizationId(id, org.getId()).orElseThrow(()
+                -> new EntityNotFoundException("Project not found"));
+
+        projectRepository.delete(project);
     }
 }

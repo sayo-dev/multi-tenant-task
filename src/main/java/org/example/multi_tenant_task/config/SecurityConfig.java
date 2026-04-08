@@ -39,6 +39,7 @@ public class SecurityConfig {
             "/api/v1/project/**",
             "/api/v1/task/**",
             "/api/v1/otp/**",
+            "/api/v1/profile/**",
 
             "/v2/api-docs",
             "/v3/api-docs",

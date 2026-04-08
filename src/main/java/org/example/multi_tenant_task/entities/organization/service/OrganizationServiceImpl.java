@@ -37,12 +37,10 @@ public class OrganizationServiceImpl implements OrganizationService {
 
         Organization org = Organization.builder()
                 .name(request.name())
-                .createdAt(LocalDateTime.now())
                 .build();
 
-        user.setOrganization(org);
-        org.setUser(List.of(user));
         orgRepository.save(org);
+        user.setOrganization(org);
     }
 
     @Override

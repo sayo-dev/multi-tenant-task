@@ -1,5 +1,6 @@
 package org.example.multi_tenant_task.entities.user;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -7,6 +8,7 @@ import org.example.multi_tenant_task.entities.organization.Organization;
 import org.example.multi_tenant_task.entities.project.Project;
 import org.example.multi_tenant_task.entities.role.Role;
 import org.example.multi_tenant_task.entities.task.Task;
+import org.example.multi_tenant_task.util.Auditable;
 //import org.example.multi_tenant_task.util.Auditable;
 
 import java.util.List;
@@ -17,9 +19,9 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 @Entity
-public class User  {
+public class User extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -45,7 +47,8 @@ public class User  {
     )
     private Set<Role> role;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+//    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY)
     private Organization organization;
 
     @OneToMany(mappedBy = "user")

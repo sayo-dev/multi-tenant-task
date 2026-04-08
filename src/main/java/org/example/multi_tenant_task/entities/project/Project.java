@@ -6,7 +6,8 @@ import lombok.experimental.SuperBuilder;
 import org.example.multi_tenant_task.entities.organization.Organization;
 import org.example.multi_tenant_task.entities.task.Task;
 import org.example.multi_tenant_task.entities.user.User;
-//import org.example.multi_tenant_task.util.Auditable;
+import org.example.multi_tenant_task.util.Auditable;
+import org.hibernate.annotations.*;
 
 import java.util.List;
 
@@ -15,9 +16,10 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
+@SoftDelete(columnName = "deleted")
 @Entity
-public class Project {
+public class Project extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +31,7 @@ public class Project {
     @Column(nullable = false)
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Organization organization;
 
     @ManyToOne
@@ -38,4 +40,5 @@ public class Project {
 
     @OneToMany(mappedBy = "project")
     private List<Task> task;
+
 }

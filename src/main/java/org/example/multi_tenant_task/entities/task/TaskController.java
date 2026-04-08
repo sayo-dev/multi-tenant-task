@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.multi_tenant_task.entities.task.dto.TaskRequest;
 import org.example.multi_tenant_task.entities.task.dto.TaskResponse;
 import org.example.multi_tenant_task.entities.task.service.TaskService;
+import org.example.multi_tenant_task.entities.user.CurrentUserUtil;
 import org.example.multi_tenant_task.util.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import java.util.List;
 public class TaskController {
 
     private final TaskService taskService;
+    private final CurrentUserUtil userUtil;
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @PostMapping("/{projectId}/create")
@@ -29,9 +31,9 @@ public class TaskController {
     }
 
     @GetMapping("/all-tasks")
-    public ResponseEntity<ApiResponse<List<TaskResponse>>> getTasks(@RequestParam(required = false) String email) {
+    public ResponseEntity<ApiResponse<List<TaskResponse>>> getTasks() {
 
-        List<TaskResponse> userTasks = taskService.getUserTasks(email);
+        List<TaskResponse> userTasks = taskService.getUserTasks(userUtil.getLoggedInUser().getEmail());
         return ResponseEntity.ok(ApiResponse.success(userTasks));
     }
 

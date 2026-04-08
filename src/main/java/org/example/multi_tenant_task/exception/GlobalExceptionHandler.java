@@ -70,6 +70,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<String>> handleInternalServerException(Exception ex) {
 
         log.info(ex.toString());
+        log.info(ex.getLocalizedMessage());
+        System.out.println(ex.getCause());
         return new ResponseEntity<>(ApiResponse.fail(ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

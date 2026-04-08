@@ -29,7 +29,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -96,7 +95,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         try {
-            emailService.sendVerificationMail(
+            emailService.sendMail(
                     request.email(),
                     OtpType.ACCOUNT_VERIFICATION.name().replaceAll("_", " "),
                     "otp-email",

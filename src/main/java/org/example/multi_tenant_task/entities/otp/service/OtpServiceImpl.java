@@ -32,7 +32,7 @@ public class OtpServiceImpl implements OtpService {
     private final EmailService emailService;
     private final RedisTemplate<String, Object> redisTemplate;
 
-    private static final long OTP_EXPIRY_MINUTES = 1;
+    private static final long OTP_EXPIRY_MINUTES = 5;
 
     @Override
     public void createOtp(OtpRequest request) {
@@ -78,7 +78,7 @@ public class OtpServiceImpl implements OtpService {
                 .build());
 
         try {
-            emailService.sendVerificationMail(request.email(),
+            emailService.sendMail(request.email(),
 
                     OtpType.ACCOUNT_VERIFICATION.name().replaceAll("_", " "),
                     "otp-email",

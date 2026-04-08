@@ -10,5 +10,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     List<Project> getAllByOrganization(Organization organization);
 
-    Optional<Project> getProjectById(Long id);
+
+    Optional<Project> findProjectByIdAndOrganizationId(Long id, Long organizationId);
 }

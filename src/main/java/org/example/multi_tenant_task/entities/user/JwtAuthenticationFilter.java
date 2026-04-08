@@ -1,5 +1,6 @@
 package org.example.multi_tenant_task.entities.user;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -83,8 +84,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         response.setContentType("application/json");
         Map<String, Object> body = Map.of(
                 "timeStamp", LocalDateTime.now().toString(),
-                "error", message,
-                "status", httpStatus.value()
+                "error", message
+//                "status", httpStatus.value()
         );
 
         new ObjectMapper().writeValue(response.getWriter(), body);

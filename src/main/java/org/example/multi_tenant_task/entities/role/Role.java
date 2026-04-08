@@ -3,6 +3,7 @@ package org.example.multi_tenant_task.entities.role;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.example.multi_tenant_task.util.Auditable;
 //import org.example.multi_tenant_task.util.Auditable;
 
 @Getter
@@ -10,9 +11,9 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Builder
+@SuperBuilder
 @Table(name = "roles")
-public class Role {
+public class Role extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
