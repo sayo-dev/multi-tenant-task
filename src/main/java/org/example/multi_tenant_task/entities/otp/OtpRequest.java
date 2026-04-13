@@ -10,4 +10,8 @@ public record OtpRequest(
         @JsonView(OtpView.Base.class) String otp,
         @JsonView({OtpView.Base.class, OtpView.Resend.class}) String email,
         @JsonView(OtpView.Purpose.class) String purpose) {
+
+    public OtpRequest(String email) {
+        this(null, email, null);
+    }
 }

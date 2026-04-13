@@ -3,6 +3,7 @@ package org.example.multi_tenant_task.entities.user.service;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.example.multi_tenant_task.config.MubaroService;
 import org.example.multi_tenant_task.entities.otp.OtpRequest;
 import org.example.multi_tenant_task.entities.otp.OtpType;
 import org.example.multi_tenant_task.entities.otp.service.OtpService;
@@ -47,6 +48,7 @@ public class UserServiceImpl implements UserService {
     private final JwtService jwtService;
     private final EmailService emailService;
     private final CurrentUserUtil currentUserUtil;
+    private final MubaroService mubaroService;
 
 
     @Transactional
@@ -76,6 +78,8 @@ public class UserServiceImpl implements UserService {
                 .role(Set.of(role))
                 .build();
 
+        userRepository.save(user);
+
         String otp = Helper.generateNumericOtp(6);
 
         //db level interaction
@@ -104,6 +108,9 @@ public class UserServiceImpl implements UserService {
         } catch (MessagingException ex) {
             throw new RuntimeException(ex);
         }
+
+//        external api (mubaro)
+//        mubaroService.sendEmail(new OtpRequest(request.email()));
 
     }
 

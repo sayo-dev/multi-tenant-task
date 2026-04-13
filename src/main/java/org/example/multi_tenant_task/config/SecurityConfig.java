@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -41,6 +42,8 @@ public class SecurityConfig {
             "/api/v1/otp/**",
             "/api/v1/profile/**",
 
+            "/api/otp-services/**",
+
             "/v2/api-docs",
             "/v3/api-docs",
             "/v3/api-docs/**",
@@ -58,6 +61,11 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 
     @Bean
@@ -107,7 +115,8 @@ public class SecurityConfig {
         ));
 
         corsConfiguration.setAllowedOrigins(List.of(
-                "http://localhost:8080"
+                "http://localhost:8080",
+                "https://api.mubaro.app"
         ));
 
         corsConfiguration.setAllowCredentials(true);

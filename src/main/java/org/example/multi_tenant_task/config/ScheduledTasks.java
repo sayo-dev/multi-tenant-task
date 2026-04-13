@@ -11,9 +11,8 @@ public class ScheduledTasks {
 
     private final OtpRepository otpRepository;
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 */6 * * *")
     public void deleteOtp() {
-
         otpRepository.deleteAll();
 
     }
